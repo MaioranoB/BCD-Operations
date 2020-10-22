@@ -52,8 +52,6 @@ architecture structure of somaBCD is
 	sum(19 downto 16) <= ("000" & c_aux4);
 end structure;
 
-
-
 --library ieee;
 --use ieee.std_logic_1164.all;
 --use ieee.numeric_std.all;
