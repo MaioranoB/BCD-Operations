@@ -33,6 +33,12 @@ end somaBCD;
 
 architecture structure of somaBCD is
 	
+	type BCDarray  is array (3 downto 0) of std_logic_vector(3 downto 0);
+
+	signal arrayA   : BCDarray := (a(15 downto 12),a(11 downto 8),a(7 downto 4),a(3 downto 0));
+	signal arrayB   : BCDarray := (b(15 downto 12),b(11 downto 8),b(7 downto 4),b(3 downto 0));
+	signal arraySUM : BCDarray;
+	
 	signal c_aux1,c_aux2,c_aux3,c_aux4 : std_logic; --cary's das somas parciais
 	
 	component somaBCD_1digito
@@ -44,12 +50,12 @@ architecture structure of somaBCD is
 	end component;
 	
 	begin
-	S0:somaBCD_1digito port map(a(3 downto 0),  b(3 downto 0),  sum(3 downto 0), '0', c_aux1);
-	S1:somaBCD_1digito port map(a(7 downto 4),  b(7 downto 4),  sum(7 downto 4), c_aux1, c_aux2);
-	S2:somaBCD_1digito port map(a(11 downto 8), b(11 downto 8), sum(11 downto 8), c_aux2, c_aux3);
-	S3:somaBCD_1digito port map(a(15 downto 12),b(15 downto 12),sum(15 downto 12), c_aux3, c_aux4);
+	S0:somaBCD_1digito port map(arrayA(0), arrayB(0), arraySUM(0), '0', c_aux1);
+	S1:somaBCD_1digito port map(arrayA(1), arrayB(1), arraySUM(1), c_aux1, c_aux2);
+	S2:somaBCD_1digito port map(arrayA(2), arrayB(2), arraySUM(2), c_aux2, c_aux3);
+	S3:somaBCD_1digito port map(arrayA(3), arrayB(3), arraySUM(3), c_aux3, c_aux4);
 	
-	sum(19 downto 16) <= ("000" & c_aux4);
+	sum <= ("000" & c_aux4) & arraySUM(3) & arraySUM(2) & arraySUM(1) & arraySUM(0);
 end structure;
 
 --library ieee;
