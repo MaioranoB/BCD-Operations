@@ -26,22 +26,22 @@ architecture behav of interface is
 	end component;
 		
 	signal A, B  : std_logic_vector(15 downto 0) := "0000000000000000";
-	signal result: std_logic_vector(19 downto 0);
+	signal sum_result: std_logic_vector(19 downto 0);
+	signal mult_result: std_logic_vector(31 downto 0);
 	
 	type tipo_estado is (escolhendoA,escolhendoB, saida);
 	signal estado : tipo_estado := escolhendoA;
 	
 begin
-	sum: somaBCD port map (A, B, result);
+	sum: somaBCD port map (A, B, sum_result);
 	
 	-- resultadoDISPLAY <= result;
 	--	estadoLED <= estado_aux;
 	
-	process(reset,botaoA,botaoB)
+	process(reset,botaoA,botaoB,operacao)
 		begin
 			if (reset = '0') then
 				estado <= escolhendoA;
-				estado_aux <= "00";
 				A <= "0000000000000000";
 				B <= "0000000000000000";
 				saidaA <= "0000000000000000";
@@ -49,7 +49,7 @@ begin
 			elsif (estado = escolhendoA and botaoA = '1') then --definindo A
 				resultadoDISPLAY <= ("0000000000000000" & entradaA);
 				saidaA <= entradaA;
-				estado = escolhendoA;
+				estado <= escolhendoA;
 			elsif (estado = escolhendoA and botaoA = '0') then --A selecionado
 				A <= entradaA;
 				estado <= escolhendoB;
@@ -63,14 +63,9 @@ begin
 			elsif (estado = saida) then
 				
 					if operacao = '0' then
-						resultadoDISPLAY <= 
-						resultadoDISPLAY <= (A & B);
-						estado_aux <= "11";
-					elsif estado_aux = "11" then
-						resultadoDISPLAY <= ("000000000000" & result);
-						estado_aux <= "10";
+						resultadoDISPLAY <= sum_result;
 					else
-						estado <= escolhendoB; -- pq caralhas entrando aqui????? entra dps que seleciona o A
+						resultadoDISPLAY <= mult_result; -- pq caralhas entrando aqui????? entra dps que seleciona o A
 					end if;
 			--else	
 			end if;
