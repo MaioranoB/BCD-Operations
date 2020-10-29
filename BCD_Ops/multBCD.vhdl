@@ -36,6 +36,7 @@ begin
 	
 	process(clk)
 		begin
+		if rising_edge(clk) then
 			if (estado = calculando and (a = "0000000000000000" or b = "0000000000000000")) then
 				mult <= "00000000000000000000000000000001";
 				estado <= pronto;
@@ -46,5 +47,6 @@ begin
 				aux_mult <= aux_res;
 				counter <= counter_res(15 downto 0);
 			end if;
+		end if;
 	end process;		
 end structure;
