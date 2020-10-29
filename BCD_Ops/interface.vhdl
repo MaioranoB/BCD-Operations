@@ -9,6 +9,7 @@ use ieee.std_logic_1164.all;
 
 entity interface is
 port (clk,reset,botaoA,botaoB : in std_logic;
+		operacao: in std_logic;
 		entradaA, entradaB: in  std_logic_vector (15 downto 0); -- switches
 		saidaA,saidaB     : out std_logic_vector (15 downto 0);
 		resultadoDISPLAY  : out std_logic_vector(31 downto 0);
@@ -29,15 +30,14 @@ architecture behav of interface is
 	
 	type tipo_estado is (escolhendoA,escolhendoB, saida);
 	signal estado : tipo_estado := escolhendoA;
-	signal estado_aux: std_logic_vector(1 downto 0) := "00";
 	
 begin
 	sum: somaBCD port map (A, B, result);
 	
-	--resultadoDISPLAY <= result;
-	estadoLED <= estado_aux;
+	-- resultadoDISPLAY <= result;
+	--	estadoLED <= estado_aux;
 	
-	process(clk,reset,botaoA,botaoB)
+	process(reset,botaoA,botaoB)
 		begin
 			if (reset = '0') then
 				estado <= escolhendoA;
@@ -49,20 +49,21 @@ begin
 			elsif (estado = escolhendoA and botaoA = '1') then --definindo A
 				resultadoDISPLAY <= ("0000000000000000" & entradaA);
 				saidaA <= entradaA;
-			elsif (estado = escolhendoA and botaoA = '0')then --A selecionado
+				estado = escolhendoA;
+			elsif (estado = escolhendoA and botaoA = '0') then --A selecionado
 				A <= entradaA;
 				estado <= escolhendoB;
-				estado_aux <= "01";
 			elsif (estado = escolhendoB and botaoB = '1') then --definindo B
-				resultadoDISPLAY <= ("0000000000000000" & entradaB);
+				resultadoDISPLAY <= (A & entradaB);
 				saidaB <= entradaB;
-			elsif (estado = escolhendoB and botaoB = '0')then --B selecionado
+				estado <= escolhendoB;
+			elsif (estado = escolhendoB and botaoB = '0') then --B selecionado
 				B <= entradaB;
 				estado <= saida;
-				estado_aux <= "10";
-			elsif (estado = saida and rising_edge(clk))then
+			elsif (estado = saida) then
 				
-					if estado_aux = "10" then
+					if operacao = '0' then
+						resultadoDISPLAY <= 
 						resultadoDISPLAY <= (A & B);
 						estado_aux <= "11";
 					elsif estado_aux = "11" then

@@ -21,6 +21,7 @@ architecture behav of PLACA is
 
 	component interface
 		port (clk,reset,botaoA,botaoB : in std_logic;
+				operacao: in std_logic;
 				entradaA, entradaB: in  std_logic_vector (15 downto 0);
 				saidaA,saidaB     : out std_logic_vector (15 downto 0);
 				resultadoDISPLAY  : out std_logic_vector(31 downto 0);
@@ -52,6 +53,7 @@ begin
 	DIVfreq: divisorFREQ port map (CLOCK_50,V_BT(0),clk1seg);
 	
 	ITERF  : interface port map (clk1seg,V_BT(0),V_BT(1),V_BT(2), -- chaveSEL V_SW(17)
+										  V_SW(17), --operacao
 										  V_SW(15 downto 0),V_SW(15 downto 0), --A,B
 										  displayA,displayB,resultado, --displayAeb nao tao servindo pra nd
 										  G_LEDR);
