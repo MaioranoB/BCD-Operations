@@ -38,7 +38,7 @@ begin
 		begin
 		if rising_edge(clk) then
 			if (estado = calculando and (a = "0000000000000000" or b = "0000000000000000")) then
-				mult <= "00000000000000000000000000000001";
+				mult <= "00000000000000000000000000000000";
 				estado <= pronto;
 			elsif (estado = calculando and counter = b) then
 				mult <= aux_mult;

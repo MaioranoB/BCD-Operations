@@ -63,7 +63,7 @@ begin
 			elsif (estado = saida) then
 				
 					if operacao = '0' then
-						resultadoDISPLAY <= sum_result;
+						resultadoDISPLAY <= "000000000000" & sum_result;
 					else
 						resultadoDISPLAY <= mult_result; -- pq caralhas entrando aqui????? entra dps que seleciona o A
 					end if;
