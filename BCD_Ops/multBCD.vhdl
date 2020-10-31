@@ -35,20 +35,15 @@ begin
 	aux_sum: somaBCD_8digitos port map (aux_mult, A8dig, aux_res);
 	aux_counter: somaBCD port map (counter, "0000000000000001", counter_res);
 	
-	process(clk, start)
+	process(clk)
 		begin
-		if (start'event and start = '1') then
-			A8dig <= "0000000000000000" & a;
-			aux_mult <= "00000000000000000000000000000000";
-			aux_res <= "00000000000000000000000000000000";
-			counter <= "0000000000000000";
-			counter_res <= "00000000000000000000";
-			estado <= calculando;
-		elsif (start'event and start = '0') then
-			estado <= esperando;
-		elsif rising_edge(clk) then
-			
-			if (estado = calculando and (a = "0000000000000000" or b = "0000000000000000")) then
+		if rising_edge(clk) then
+			if (start = '0') then
+				A8dig <= "0000000000000000" & a;
+				aux_mult <= "00000000000000000000000000000000";
+				counter <= "0000000000000000";
+				estado <= calculando;
+			elsif (estado = calculando and (a = "0000000000000000" or b = "0000000000000000")) then
 				mult <= "00000000000000000000000000000000";
 				estado <= esperando;
 			elsif (estado = calculando and counter = b) then
