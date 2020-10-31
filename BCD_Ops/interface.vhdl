@@ -24,16 +24,26 @@ architecture behav of interface is
 				sum      : out std_logic_vector(19 downto 0)
 		);
 	end component;
+	
+	component multBCD
+		port (a,b      : in  std_logic_vector(15 downto 0);
+				clk 		: in std_logic;
+				start		: in std_logic;
+				mult     : out std_logic_vector(31 downto 0)
+		);
+	end component;
 		
 	signal A, B  : std_logic_vector(15 downto 0) := "0000000000000000";
 	signal sum_result: std_logic_vector(19 downto 0);
 	signal mult_result: std_logic_vector(31 downto 0);
+	signal start_mult: std_logic := '0';
 	
 	type tipo_estado is (escolhendoA,escolhendoB, saida);
 	signal estado : tipo_estado := escolhendoA;
 	
 begin
 	sum: somaBCD port map (A, B, sum_result);
+	mult: multBCD port map (A, B, clk, start_mult, mult_result);
 	
 	-- resultadoDISPLAY <= result;
 	--	estadoLED <= estado_aux;
@@ -44,6 +54,7 @@ begin
 				estado <= escolhendoA;
 				A <= "0000000000000000";
 				B <= "0000000000000000";
+				start_mult <= '0';
 				saidaA <= "0000000000000000";
 				saidaB <= "0000000000000000";
 			elsif (estado = escolhendoA and botaoA = '1') then --definindo A
@@ -60,12 +71,13 @@ begin
 			elsif (estado = escolhendoB and botaoB = '0') then --B selecionado
 				B <= entradaB;
 				estado <= saida;
+				start_mult <= '1';
 			elsif (estado = saida) then
 				
 					if operacao = '0' then
 						resultadoDISPLAY <= "000000000000" & sum_result;
 					else
-						resultadoDISPLAY <= mult_result; -- pq caralhas entrando aqui????? entra dps que seleciona o A
+						resultadoDISPLAY <= mult_result;
 					end if;
 			--else	
 			end if;

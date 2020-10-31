@@ -5,6 +5,7 @@ use ieee.std_logic_unsigned.all;
 entity multBCD is
 port (a,b      : in  std_logic_vector(15 downto 0); --2 numeros de ate 4 algarismos (4*4 = 16bits)
 		clk		: in std_logic;
+		start 	: in std_logic;
 		mult     : out std_logic_vector(31 downto 0) --maior resultado possivel: 9999*9999 = 99.980.001 (8*4 = 32bits)
 );
 end multBCD;
@@ -24,8 +25,8 @@ architecture structure of multBCD is
 	
 	signal counter : std_logic_vector(15 downto 0) := "0000000000000000";
 	signal counter_res : std_logic_vector(19 downto 0) := "00000000000000000000";
-	type tipo_estado is (calculando, pronto);
-	signal estado : tipo_estado := calculando;
+	type tipo_estado is (calculando, esperando);
+	signal estado : tipo_estado := esperando;
 	signal A8dig : std_logic_vector(31 downto 0) := "0000000000000000" & a;
 	signal aux_mult : std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
 	signal aux_res : std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
@@ -34,15 +35,25 @@ begin
 	aux_sum: somaBCD_8digitos port map (aux_mult, A8dig, aux_res);
 	aux_counter: somaBCD port map (counter, "0000000000000001", counter_res);
 	
-	process(clk)
+	process(clk, start)
 		begin
-		if rising_edge(clk) then
+		if (start'event and start = '1') then
+			A8dig <= "0000000000000000" & a;
+			aux_mult <= "00000000000000000000000000000000";
+			aux_res <= "00000000000000000000000000000000";
+			counter <= "0000000000000000";
+			counter_res <= "00000000000000000000";
+			estado <= calculando;
+		elsif (start'event and start = '0') then
+			estado <= esperando;
+		elsif rising_edge(clk) then
+			
 			if (estado = calculando and (a = "0000000000000000" or b = "0000000000000000")) then
 				mult <= "00000000000000000000000000000000";
-				estado <= pronto;
+				estado <= esperando;
 			elsif (estado = calculando and counter = b) then
 				mult <= aux_mult;
-				estado <= pronto;
+				estado <= esperando;
 			elsif (estado = calculando) then
 				aux_mult <= aux_res;
 				counter <= counter_res(15 downto 0);
