@@ -46,6 +46,7 @@ begin
 				resultadoDISPLAY <= A & B;
 				start_mult <= '0';
 			elsif (estado = escolhendoA and botaoA = '1') then --definindo A
+				start_mult <= '0';
 				resultadoDISPLAY <= ("0000000000000000" & entradaA);
 				estado <= escolhendoA;
 			elsif (estado = escolhendoA and botaoA = '0') then --A selecionado
