@@ -3,10 +3,9 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_unsigned.all;
 
 entity multBCD is
-port (a,b      : in  std_logic_vector(15 downto 0); --2 numeros de ate 4 algarismos (4*4 = 16bits)
-		clk		: in std_logic;
-		start 	: in std_logic;
-		mult     : out std_logic_vector(31 downto 0) --maior resultado possivel: 9999*9999 = 99.980.001 (8*4 = 32bits)
+port (a,b        : in  std_logic_vector(15 downto 0); --2 numeros de ate 4 algarismos (4*4 = 16bits)
+		clk, start : in std_logic;
+		mult       : out std_logic_vector(31 downto 0) --maior resultado possivel: 9999*9999 = 99.980.001 (8*4 = 32bits)
 );
 end multBCD;
 
@@ -23,13 +22,14 @@ architecture structure of multBCD is
 		);
 	end component;
 	
-	signal counter : std_logic_vector(15 downto 0) := "0000000000000000";
-	signal counter_res : std_logic_vector(19 downto 0) := "00000000000000000000";
 	type tipo_estado is (calculando, esperando);
 	signal estado : tipo_estado := esperando;
-	signal A8dig : std_logic_vector(31 downto 0) := "0000000000000000" & a;
-	signal aux_mult : std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
-	signal aux_res : std_logic_vector(31 downto 0) := "00000000000000000000000000000000";
+	
+	signal counter : std_logic_vector(15 downto 0);
+	signal counter_res : std_logic_vector(19 downto 0);
+	signal A8dig : std_logic_vector(31 downto 0);
+	signal aux_mult : std_logic_vector(31 downto 0);
+	signal aux_res : std_logic_vector(31 downto 0);
 
 begin
 	aux_sum: somaBCD_8digitos port map (aux_mult, A8dig, aux_res);
