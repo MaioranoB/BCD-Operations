@@ -43,6 +43,9 @@ begin
 				aux_mult <= "00000000000000000000000000000000";
 				counter <= "0000000000000000";
 				estado <= calculando;
+			elsif (estado = calculando and (a = "0000000000000000" or b = "0000000000000000")) then
+				mult <= "00000000000000000000000000000000";
+				estado <= esperando;
 			elsif (estado = calculando and counter = b) then
 				mult <= aux_mult;
 				estado <= esperando;
